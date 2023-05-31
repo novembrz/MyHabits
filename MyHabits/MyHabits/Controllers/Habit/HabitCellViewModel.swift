@@ -8,8 +8,13 @@
 import Foundation
 
 protocol HabitCellViewModelType {
-    
+    var habit: Habit { get }
 }
 
 final class HabitCellViewModel: HabitCellViewModelType {
+    var habit: Habit
+    
+    init(habit: Habit) {
+        self.habit = habit
+    }
 }

@@ -11,16 +11,13 @@ import PinLayout
 class HabitCell: UITableViewCell {
     
     static let id = "HabitCell"
-    var viewModel: HabitCellViewModelType?
+    //var viewModel: HabitCellViewModelType?
     
- //   weak var viewModel: HabitCellViewModelType? //{
-//        willSet(viewModel) {
-//            guard let viewModel = viewModel else { return }
-//            taskLabel.text = viewModel.description
-//            guard let url = URL(string: viewModel.imageUrl) else { return }
-//            photoImageView.sd_setImage(with: url, completed: nil)
-//        }
-//    }
+    var viewModel: HabitCellViewModelType? {
+        willSet(viewModel) {
+            configure()
+        }
+    }
     
     private var view = UIView()
     private var taskLabel = UILabel()
@@ -33,7 +30,7 @@ class HabitCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        backgroundColor = .red
+        backgroundColor = .clear
         setupUI()
         setupConstraints()
     }
@@ -44,14 +41,24 @@ class HabitCell: UITableViewCell {
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+        
+        checkImageView.image = UIImage(systemName: selected ? "checkmark.circle.fill" : "circle" )?.withRenderingMode(.alwaysTemplate)
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         checkImageView.image = nil
     }
+    
+//    override func layoutIfNeeded() {
+//        super.layoutIfNeeded()
+//        setupConstraints()
+//    }
+    
+    override func sizeThatFits(_ size: CGSize) -> CGSize { //зачем
+        return autoSizeThatFits(size, layoutClosure: setupConstraints)
+    }
+    
 
     //MARK: - Setup UI
     
@@ -59,26 +66,33 @@ class HabitCell: UITableViewCell {
         view.backgroundColor = .white
         view.layer.cornerRadius = 8
         
-        taskLabel.textColor = .purple
         taskLabel.font = UIFont.boldSystemFont(ofSize: 20)
-        taskLabel.text = "Task label"
         
         dateLabel.textColor = .systemGray2
         dateLabel.font = UIFont.systemFont(ofSize: 12)
-        dateLabel.text = "DATE label"
         
         countLabel.textColor = .systemGray
-        dateLabel.font = UIFont.systemFont(ofSize: 13)
-        countLabel.text = "sdfg"
+        countLabel.font = UIFont.systemFont(ofSize: 13)
+        countLabel.text = "sd"
         
-        checkImageView.image = UIImage(systemName: "circle")?.withRenderingMode(.alwaysTemplate)
-        checkImageView.tintColor = .purple
+        //checkImageView.image = UIImage(systemName: "circle")?.withRenderingMode(.alwaysTemplate)
         
         addSubview(view)
         view.addSubview(taskLabel)
         view.addSubview(dateLabel)
         view.addSubview(countLabel)
         view.addSubview(checkImageView)
+    }
+    
+    func configure() {
+        guard let habbit = viewModel?.habit else { return }
+
+        taskLabel.text = habbit.name
+        taskLabel.textColor = habbit.color
+        
+        dateLabel.text = habbit.dateString
+        
+        checkImageView.tintColor = habbit.color
     }
     
     private func setupConstraints() {
@@ -99,8 +113,7 @@ class HabitCell: UITableViewCell {
         
         dateLabel.pin
             .below(of: taskLabel, aligned: .left)
-            .top()
-            .horizontally()
+            .right()
             .marginTop(4)
             .marginRight(103)
             .sizeToFit(.width)

@@ -14,10 +14,34 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-                window = UIWindow(frame: windowScene.coordinateSpace.bounds)
-                window?.windowScene = windowScene
-                window?.rootViewController = HabitViewController()
-                window?.makeKeyAndVisible()
+        window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+        window?.windowScene = windowScene
+        window?.rootViewController = createTabBarController()
+        window?.makeKeyAndVisible()
+    }
+    
+    private func createTabBarController() -> UITabBarController {
+        let habitsViewController = createNavigationController(rootViewController: HabitsViewController(), title: "Привычки", icon: "list.bullet.rectangle.fill", tag: 0)
+        let infoViewController = createNavigationController(rootViewController: InfoViewController(), title: "Информация", icon: "info.circle.fill", tag: 1)
+        
+        let tabBarController = UITabBarController()
+        tabBarController.viewControllers = [habitsViewController, infoViewController]
+        UITabBar.appearance().tintColor = .purple
+        tabBarController.tabBar.backgroundColor = .systemGray6
+        
+        return tabBarController
+    }
+    
+    private func createNavigationController(
+        rootViewController: UIViewController,
+        title: String,
+        icon: String,
+        tag: Int
+    ) -> UINavigationController {
+        let viewController = UINavigationController(rootViewController: rootViewController)
+        viewController.title = title
+        viewController.tabBarItem = UITabBarItem(title: title, image: UIImage(systemName: icon), tag: tag)
+        return viewController
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
