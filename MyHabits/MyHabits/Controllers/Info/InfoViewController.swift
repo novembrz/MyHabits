@@ -21,9 +21,14 @@ class InfoViewController: UIViewController {
         setupConstraints()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) { //после
         super.viewDidAppear(animated)
         
+        //scrollView.contentSize.height = descriptionLabel.frame.maxY + titleLabel.frame.maxY
+    }
+    
+    override func viewWillAppear(_ animated: Bool) { //перед показом контроллера
+        super.viewWillAppear(animated)
         scrollView.contentSize.height = descriptionLabel.frame.maxY + titleLabel.frame.maxY
     }
     

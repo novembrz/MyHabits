@@ -26,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [habitsViewController, infoViewController]
-        UITabBar.appearance().tintColor = .purple
+        UITabBar.appearance().tintColor = .systemPurple
         tabBarController.tabBar.backgroundColor = .systemGray6
         
         return tabBarController

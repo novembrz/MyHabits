@@ -20,11 +20,23 @@ class HabitsViewController: UIViewController {
         view.backgroundColor = .systemGray6
 
         viewModel = HabitViewModel()
-        viewModel?.getHabits()
 
+        getData()
         setupUI()
         setupNavigationBar()
         setupConstraints()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    private func getData() {
+        viewModel?.getHabits { [weak self] in
+            self?.tableView.reloadData()
+        }
     }
     
     //MARK: - setupUI
@@ -36,21 +48,16 @@ class HabitsViewController: UIViewController {
         tableView.rowHeight = .rowHeight
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.reloadData()
 
         view.addSubview(progressView)
         view.addSubview(tableView)
     }
     
     private func setupNavigationBar() {
-        navigationController?.navigationBar.tintColor = .purple
+        navigationController?.navigationBar.tintColor = .systemPurple
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addHabit))
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.title = .navigationTitle
-    }
-    
-    @objc func addHabit() {
-        navigationController?.pushViewController(HabitSettingsViewController(), animated: true)
     }
     
     private func setupConstraints() {
@@ -65,6 +72,20 @@ class HabitsViewController: UIViewController {
     }
 }
 
+//MARK: - Actions
+
+extension HabitsViewController {
+    @objc func addHabit() {
+        openController(HabitSettingsViewController())
+    }
+    
+    private func openController(_ vc: UIViewController) {
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .overFullScreen
+        navigationController?.present(navController, animated: true)
+    }
+}
+
 //MARK: - UITableViewDataSource
 
 extension HabitsViewController: UITableViewDataSource {
@@ -73,10 +94,11 @@ extension HabitsViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: HabitCell.id,
-            for: indexPath) as? HabitCell,
-              let viewModel = viewModel
+        guard
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: HabitCell.id,
+                for: indexPath) as? HabitCell,
+            let viewModel = viewModel
         else { return UITableViewCell() }
         
         let cellViewModel = viewModel.getCellViewModel(for: indexPath)
@@ -89,6 +111,11 @@ extension HabitsViewController: UITableViewDataSource {
 //MARK: - UITableViewDelegate
 
 extension HabitsViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let viewModel = viewModel else { return }
+        let newVC = ActionTimeViewController(habit: viewModel.gethabit(for: indexPath))
+        openController(newVC)
+    }
 }
 
 

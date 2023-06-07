@@ -7,11 +7,12 @@
 
 import Foundation
 
-protocol HabitCellViewModelType {
+protocol HabitCellViewModelType: class {
     var habit: Habit { get }
 }
 
 final class HabitCellViewModel: HabitCellViewModelType {
+    let store = HabitsStore.shared
     var habit: Habit
     
     init(habit: Habit) {

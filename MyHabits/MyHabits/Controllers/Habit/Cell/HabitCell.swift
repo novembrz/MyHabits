@@ -11,11 +11,11 @@ import PinLayout
 class HabitCell: UITableViewCell {
     
     static let id = "HabitCell"
-    //var viewModel: HabitCellViewModelType?
     
-    var viewModel: HabitCellViewModelType? {
+    weak var viewModel: HabitCellViewModelType? {
         willSet(viewModel) {
-            configure()
+            guard let habit = viewModel?.habit else { return }
+            configure(habit: habit)
         }
     }
     
@@ -42,7 +42,7 @@ class HabitCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         
-        checkImageView.image = UIImage(systemName: selected ? "checkmark.circle.fill" : "circle" )?.withRenderingMode(.alwaysTemplate)
+//        checkImageView.image = UIImage(systemName: selected ? "checkmark.circle.fill" : "circle" )?.withRenderingMode(.alwaysTemplate)
     }
     
     override func prepareForReuse() {
@@ -50,7 +50,7 @@ class HabitCell: UITableViewCell {
         checkImageView.image = nil
     }
     
-//    override func layoutIfNeeded() {
+//    override func layoutIfNeeded() { //layoutsubviews
 //        super.layoutIfNeeded()
 //        setupConstraints()
 //    }
@@ -67,15 +67,16 @@ class HabitCell: UITableViewCell {
         view.layer.cornerRadius = 8
         
         taskLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        taskLabel.numberOfLines = 2
+        taskLabel.text = "f"
         
         dateLabel.textColor = .systemGray2
         dateLabel.font = UIFont.systemFont(ofSize: 12)
+        dateLabel.text = "f"
         
         countLabel.textColor = .systemGray
         countLabel.font = UIFont.systemFont(ofSize: 13)
-        countLabel.text = "sd"
-        
-        //checkImageView.image = UIImage(systemName: "circle")?.withRenderingMode(.alwaysTemplate)
+        countLabel.text = "Счетчик: "
         
         addSubview(view)
         view.addSubview(taskLabel)
@@ -84,21 +85,21 @@ class HabitCell: UITableViewCell {
         view.addSubview(checkImageView)
     }
     
-    func configure() {
-        guard let habbit = viewModel?.habit else { return }
-
-        taskLabel.text = habbit.name
-        taskLabel.textColor = habbit.color
+    private func configure(habit: Habit) {
+        taskLabel.text = habit.name
+        taskLabel.textColor = habit.color
         
-        dateLabel.text = habbit.dateString
+        dateLabel.text = habit.dateString
         
-        checkImageView.tintColor = habbit.color
+        checkImageView.tintColor = habit.color
+        checkImageView.image = UIImage(systemName: habit.isAlreadyTakenToday ? "checkmark.circle.fill" : "circle")?.withRenderingMode(.alwaysTemplate)
     }
     
     private func setupConstraints() {
         view.pin
             .all()
-            .marginBottom(12)
+            .marginTop(6)
+            .marginBottom(6)
             .marginHorizontal(17)
             .height(130)
             .width(UIScreen.main.bounds.width - 34)

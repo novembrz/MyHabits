@@ -28,7 +28,7 @@ class ProgressView: UIView {
     
     private func setupUI() {
         view.layer.cornerRadius = 8
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         
         titleLabel.font = UIFont.boldSystemFont(ofSize: 13)
         titleLabel.textColor = .systemGray
@@ -36,11 +36,11 @@ class ProgressView: UIView {
         
         progressLabel.font = UIFont.boldSystemFont(ofSize: 13)
         progressLabel.textColor = .systemGray
-        progressLabel.text = "50%"
+        progressLabel.text = "\(HabitsStore.shared.todayProgress*10)%"
         progressLabel.textAlignment = .right
         
-        progressView.progressTintColor = .purple
-        progressView.progress = 0.5
+        progressView.progressTintColor = .systemPurple
+        progressView.progress = HabitsStore.shared.todayProgress
         
         addSubview(view)
         view.addSubview(titleLabel)
