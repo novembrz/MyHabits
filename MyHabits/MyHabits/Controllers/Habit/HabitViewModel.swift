@@ -10,9 +10,8 @@ import Foundation
 protocol HabitViewModelType {
     func getHabits(completion: @escaping() -> ())
     func getCellViewModel(for indexPath: IndexPath) -> HabitCellViewModelType?
-    //func getActionTimeViewModel(for indexPath: IndexPath) -> ActionTimeViewModelType?
     func getCellsCount() -> Int
-    func gethabit(for indexPath: IndexPath) -> Habit
+    func getHabit(for indexPath: IndexPath) -> Habit
 }
 
 final class HabitViewModel: HabitViewModelType {
@@ -22,26 +21,19 @@ final class HabitViewModel: HabitViewModelType {
     
     func getHabits(completion: @escaping() -> ()) {
         habits = store.habits
-        DispatchQueue.main.async {
-            completion()
-        }
+        completion()
+    }
+    
+    func getHabit(for indexPath: IndexPath) -> Habit {
+        return habits[indexPath.row - 1]
     }
     
     func getCellViewModel(for indexPath: IndexPath) -> HabitCellViewModelType? {
-        let habit = habits[indexPath.row]
+        let habit = habits[indexPath.row - 1]
         return HabitCellViewModel(habit: habit)
     }
     
-//    func getActionTimeViewModel(for indexPath: IndexPath) -> ActionTimeViewModelType? {
-//        let habit = habits[indexPath.row]
-//        return ActionTimeViewModel(habit: habit)
-//    }
-    
     func getCellsCount() -> Int {
-        return habits.count
-    }
-    
-    func gethabit(for indexPath: IndexPath) -> Habit {
-        return habits[indexPath.row]
+        return habits.count + 1
     }
 }

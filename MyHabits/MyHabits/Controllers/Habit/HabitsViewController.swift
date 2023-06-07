@@ -12,7 +12,7 @@ class HabitsViewController: UIViewController {
     
     private var viewModel: HabitViewModelType?
     private var tableView = UITableView()
-    private var progressView = ProgressView()
+   // private var progressView = ProgressView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +29,6 @@ class HabitsViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
@@ -42,14 +41,14 @@ class HabitsViewController: UIViewController {
     //MARK: - setupUI
     
     private func setupUI() {
-        tableView.backgroundColor = .clear
+        tableView.backgroundColor = .systemGray6
         tableView.register(HabitCell.self, forCellReuseIdentifier: HabitCell.id)
+        tableView.register(ProgressViewCell.self, forCellReuseIdentifier: ProgressViewCell.id)
         tableView.separatorStyle = .none
-        tableView.rowHeight = .rowHeight
+//        tableView.rowHeight = .rowHeight
         tableView.delegate = self
         tableView.dataSource = self
 
-        view.addSubview(progressView)
         view.addSubview(tableView)
     }
     
@@ -61,14 +60,8 @@ class HabitsViewController: UIViewController {
     }
     
     private func setupConstraints() {
-        progressView.pin
-            .top()
-            .horizontally()
-        
         tableView.pin
-            .below(of: progressView)
-            .horizontally()
-            .bottom()
+            .all()
     }
 }
 
@@ -89,22 +82,40 @@ extension HabitsViewController {
 //MARK: - UITableViewDataSource
 
 extension HabitsViewController: UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel?.getCellsCount() ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: HabitCell.id,
-                for: indexPath) as? HabitCell,
-            let viewModel = viewModel
-        else { return UITableViewCell() }
-        
-        let cellViewModel = viewModel.getCellViewModel(for: indexPath)
-        cell.viewModel = cellViewModel
-        
-        return cell
+        if indexPath.row == 0 {
+            guard
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: ProgressViewCell.id,
+                    for: indexPath) as? ProgressViewCell
+            else { return UITableViewCell() }
+            return cell
+        } else {
+            guard
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: HabitCell.id,
+                    for: indexPath) as? HabitCell,
+                let viewModel = viewModel
+            else { return UITableViewCell() }
+            
+            let cellViewModel = viewModel.getCellViewModel(for: indexPath)
+            cell.viewModel = cellViewModel
+            
+            return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.row == 0 {
+            return .progressRowHeight
+        } else {
+            return .rowHeight
+        }
     }
 }
 
@@ -112,9 +123,11 @@ extension HabitsViewController: UITableViewDataSource {
 
 extension HabitsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let viewModel = viewModel else { return }
-        let newVC = ActionTimeViewController(habit: viewModel.gethabit(for: indexPath))
-        openController(newVC)
+        if indexPath.row != 0 {
+            guard let viewModel = viewModel else { return }
+            let newVC = ActionTimeViewController(habit: viewModel.getHabit(for: indexPath))
+            openController(newVC)
+        }
     }
 }
 
@@ -123,6 +136,7 @@ extension HabitsViewController: UITableViewDelegate {
 
 private extension CGFloat {
     static let rowHeight: CGFloat = 142
+    static let progressRowHeight: CGFloat = 93
 }
 
 private extension String {
