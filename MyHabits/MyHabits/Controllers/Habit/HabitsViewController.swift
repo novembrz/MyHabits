@@ -8,17 +8,19 @@
 import UIKit
 import PinLayout
 
+protocol ReloaderDelegate {
+    func reloadTableView()
+}
+
 class HabitsViewController: UIViewController {
     
     private var viewModel: HabitViewModelType?
     private var tableView = UITableView()
-   // private var progressView = ProgressView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .systemGray6
-
         viewModel = HabitViewModel()
 
         getData()
@@ -32,12 +34,6 @@ class HabitsViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
-    private func getData() {
-        viewModel?.getHabits { [weak self] in
-            self?.tableView.reloadData()
-        }
-    }
-    
     //MARK: - setupUI
     
     private func setupUI() {
@@ -45,7 +41,6 @@ class HabitsViewController: UIViewController {
         tableView.register(HabitCell.self, forCellReuseIdentifier: HabitCell.id)
         tableView.register(ProgressViewCell.self, forCellReuseIdentifier: ProgressViewCell.id)
         tableView.separatorStyle = .none
-//        tableView.rowHeight = .rowHeight
         tableView.delegate = self
         tableView.dataSource = self
 
@@ -69,7 +64,9 @@ class HabitsViewController: UIViewController {
 
 extension HabitsViewController {
     @objc func addHabit() {
-        openController(HabitSettingsViewController())
+        let vc = HabitSettingsViewController()
+        vc.delegate = self
+        openController(vc)
     }
     
     private func openController(_ vc: UIViewController) {
@@ -78,6 +75,22 @@ extension HabitsViewController {
         navigationController?.present(navController, animated: true)
     }
 }
+
+
+//MARK: - ReloaderDelegate
+
+extension HabitsViewController: ReloaderDelegate {
+    private func getData() {
+        viewModel?.getHabits { [weak self] in
+            self?.tableView.reloadData()
+        }
+    }
+    
+    func reloadTableView() {
+        getData()
+    }
+}
+
 
 //MARK: - UITableViewDataSource
 

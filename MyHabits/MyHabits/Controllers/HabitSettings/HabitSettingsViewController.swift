@@ -27,7 +27,7 @@ class HabitSettingsViewController: UIViewController {
     private var descriptionStackView = UIStackView()
     private var stackView = UIStackView()
     
-    var time = ""
+    var delegate: ReloaderDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -169,6 +169,7 @@ private extension HabitSettingsViewController {
     @objc private func saveButtonTapped() {
         if let text = titleTextField.text, !text.isEmpty {
             viewModel?.saveNewHabit(title: text, color: colorButton.tintColor, date: timePicker.date) {
+                self.delegate?.reloadTableView()
                 self.navigationController?.dismiss(animated: true)
             }
         }
