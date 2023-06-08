@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8727353F2A30A0DA002695D1 /* ActionTimeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8727353E2A30A0DA002695D1 /* ActionTimeCell.swift */; };
+		872735412A30A386002695D1 /* ActionTimeCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872735402A30A386002695D1 /* ActionTimeCellViewModel.swift */; };
 		873331B62A29F71A00BD566A /* HabitSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 873331B52A29F71A00BD566A /* HabitSettingsViewModel.swift */; };
 		873331B82A2B4E0A00BD566A /* ActionTimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 873331B72A2B4E0A00BD566A /* ActionTimeViewController.swift */; };
 		873331BA2A2B4EDE00BD566A /* ActionTimeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 873331B92A2B4EDE00BD566A /* ActionTimeViewModel.swift */; };
@@ -27,6 +29,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8727353E2A30A0DA002695D1 /* ActionTimeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTimeCell.swift; sourceTree = "<group>"; };
+		872735402A30A386002695D1 /* ActionTimeCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTimeCellViewModel.swift; sourceTree = "<group>"; };
 		873331B52A29F71A00BD566A /* HabitSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitSettingsViewModel.swift; sourceTree = "<group>"; };
 		873331B72A2B4E0A00BD566A /* ActionTimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTimeViewController.swift; sourceTree = "<group>"; };
 		873331B92A2B4EDE00BD566A /* ActionTimeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTimeViewModel.swift; sourceTree = "<group>"; };
@@ -64,6 +68,8 @@
 			children = (
 				873331B72A2B4E0A00BD566A /* ActionTimeViewController.swift */,
 				873331B92A2B4EDE00BD566A /* ActionTimeViewModel.swift */,
+				8727353E2A30A0DA002695D1 /* ActionTimeCell.swift */,
+				872735402A30A386002695D1 /* ActionTimeCellViewModel.swift */,
 			);
 			path = ActionTime;
 			sourceTree = "<group>";
@@ -88,9 +94,9 @@
 			isa = PBXGroup;
 			children = (
 				87634CB02A23578D00AF9965 /* Info.plist */,
-				87634DCA2A237C7600AF9965 /* HabitStore.swift */,
-				87634DCC2A237C9F00AF9965 /* HabitModel.swift */,
 				87634CB62A235BEE00AF9965 /* Application */,
+				87C3470A2A31C368001F96EA /* Services */,
+				87C347092A31C35E001F96EA /* Models */,
 				87634CBD2A235EA700AF9965 /* Controllers */,
 				87634CB72A235BF700AF9965 /* Supporting files */,
 			);
@@ -161,6 +167,22 @@
 				87634CC42A2367FB00AF9965 /* HabitCellViewModel.swift */,
 			);
 			path = Cell;
+			sourceTree = "<group>";
+		};
+		87C347092A31C35E001F96EA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				87634DCC2A237C9F00AF9965 /* HabitModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		87C3470A2A31C368001F96EA /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				87634DCA2A237C7600AF9965 /* HabitStore.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -240,6 +262,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				87634CC32A23646F00AF9965 /* HabitsViewController.swift in Sources */,
+				872735412A30A386002695D1 /* ActionTimeCellViewModel.swift in Sources */,
+				8727353F2A30A0DA002695D1 /* ActionTimeCell.swift in Sources */,
 				87634CA32A23578C00AF9965 /* AppDelegate.swift in Sources */,
 				87634CA52A23578C00AF9965 /* SceneDelegate.swift in Sources */,
 				87634CC12A2362D300AF9965 /* HabitCell.swift in Sources */,

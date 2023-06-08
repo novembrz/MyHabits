@@ -12,7 +12,6 @@ protocol HabitCellViewModelType: class {
 }
 
 final class HabitCellViewModel: HabitCellViewModelType {
-    let store = HabitsStore.shared
     var habit: Habit
     
     init(habit: Habit) {

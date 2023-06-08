@@ -91,7 +91,6 @@ extension HabitsViewController: ReloaderDelegate {
     }
 }
 
-
 //MARK: - UITableViewDataSource
 
 extension HabitsViewController: UITableViewDataSource {
@@ -102,10 +101,9 @@ extension HabitsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
-            guard
-                let cell = tableView.dequeueReusableCell(
-                    withIdentifier: ProgressViewCell.id,
-                    for: indexPath) as? ProgressViewCell
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: ProgressViewCell.id,
+                for: indexPath) as? ProgressViewCell
             else { return UITableViewCell() }
             return cell
         } else {

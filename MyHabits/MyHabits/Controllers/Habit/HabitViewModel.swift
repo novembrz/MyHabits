@@ -19,7 +19,7 @@ final class HabitViewModel: HabitViewModelType {
     private let store = HabitsStore.shared
     var habits: [Habit] = []
     
-    func getHabits(completion: @escaping() -> ()) {
+    func getHabits(completion: @escaping () -> ()) {
         habits = store.habits
         completion()
     }

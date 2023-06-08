@@ -50,11 +50,6 @@ class HabitCell: UITableViewCell {
         checkImageView.image = nil
     }
     
-//    override func layoutIfNeeded() { //layoutsubviews
-//        super.layoutIfNeeded()
-//        setupConstraints()
-//    }
-    
     override func sizeThatFits(_ size: CGSize) -> CGSize { //зачем
         return autoSizeThatFits(size, layoutClosure: setupConstraints)
     }
