@@ -20,6 +20,7 @@ class HabitSettingsViewController: UIViewController {
     private let descriptionLabel = UILabel()
     private let chooseTimeLabel = UILabel()
     private let timePicker = UIDatePicker()
+    private let deleteButton = UIButton()
     
     private var titleStackView = UIStackView()
     private var colorStackView = UIStackView()
@@ -28,11 +29,18 @@ class HabitSettingsViewController: UIViewController {
     private var stackView = UIStackView()
     
     var delegate: ReloaderDelegate?
-
+    
+    init(habit: Habit? = nil) {
+        self.viewModel = HabitSettingsViewModel(habit: habit)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        viewModel = HabitSettingsViewModel()
 
         chooseTime()
         chooseColor()
@@ -63,34 +71,52 @@ class HabitSettingsViewController: UIViewController {
         view.backgroundColor = .systemBackground
         
         titleLabel.text = .nameTitle.uppercased()
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 13)
+        titleLabel.font = UIFont.boldSystemFont(ofSize: .smallTextSize)
         
         titleTextField.placeholder = .placeholder
         
         colorLabel.text = .colorTitle.uppercased()
-        colorLabel.font = UIFont.boldSystemFont(ofSize: 13)
+        colorLabel.font = UIFont.boldSystemFont(ofSize: .smallTextSize)
         
         colorButton.setImage(UIImage(systemName: .buttonImageName)?.withRenderingMode(.alwaysTemplate), for: .normal)
         colorButton.tintColor = .systemPurple
         colorButton.addTarget(self, action: #selector(colorButtonTapped), for: .touchUpInside)
         
         timeLabel.text = .timeTitle.uppercased()
-        timeLabel.font = UIFont.boldSystemFont(ofSize: 13)
+        timeLabel.font = UIFont.boldSystemFont(ofSize: .smallTextSize)
         
         descriptionLabel.text = .descriptionText
-        descriptionLabel.font = UIFont.systemFont(ofSize: 17)
+        descriptionLabel.font = UIFont.systemFont(ofSize: .bigTextSize)
         
-        chooseTimeLabel.font = UIFont.systemFont(ofSize: 17)
+        chooseTimeLabel.font = UIFont.systemFont(ofSize: .bigTextSize)
         chooseTimeLabel.textColor = .systemPurple
         chooseTimeLabel.textAlignment = .left
         
         timePicker.addTarget(self, action: #selector(timePickerChanged(picker:)), for: .valueChanged)
         timePicker.datePickerMode = .time
         timePicker.preferredDatePickerStyle = .wheels
+        
+        deleteButton.setTitle(.deleteHabitTitle, for: .normal)
+        deleteButton.setTitleColor(.systemRed, for: .normal)
+        deleteButton.addTarget(self, action: #selector(deleteButtonTaped), for: .touchUpInside)
+        
+        addInformation()
+    }
+    
+    private func addInformation() {
+        if let habit = viewModel?.habit {
+            colorButton.tintColor = habit.color
+            titleTextField.text = habit.name
+            timePicker.date = habit.date
+            let text = viewModel?.getSelectedTime(date: habit.date)
+            chooseTimeLabel.text = text
+            
+            view.addSubview(deleteButton)
+        }
     }
     
     private func setupStackViews() {
-        descriptionStackView = createStackView(spacing: 5,
+        descriptionStackView = createStackView(spacing: .itemSpacing,
                                                axis: .horizontal,
                                                distribution: .fillEqually,
                                                views: [descriptionLabel, chooseTimeLabel])
@@ -99,7 +125,7 @@ class HabitSettingsViewController: UIViewController {
         colorStackView = createStackView(views: [colorLabel, colorButton])
         timeStackView = createStackView(views: [timeLabel, descriptionStackView, timePicker])
         
-        stackView = createStackView(spacing: 15,
+        stackView = createStackView(spacing: .stackSpacing,
                                     distribution: .fill,
                                     views: [titleStackView, colorStackView, timeStackView])
         
@@ -132,6 +158,27 @@ class HabitSettingsViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
     }
     
+    private func createAlert() {
+        guard let viewModel = viewModel else { return }
+        
+        let alert = UIAlertController(
+            title: .deleteHabitTitle,
+            message: .deleteDescription + viewModel.getHabitName() + "?",
+            preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: .cancelTitle, style: .cancel)
+        let deleteAction = UIAlertAction(title: .deleteTitle, style: .destructive) { action in
+            viewModel.deleteHabit {
+                self.popViewController()
+            }
+        }
+        
+        alert.addAction(cancelAction)
+        alert.addAction(deleteAction)
+
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     
     //MARK: - setupConstraints
     
@@ -139,16 +186,23 @@ class HabitSettingsViewController: UIViewController {
         stackView.pin
             .top()
             .horizontally()
-            .marginTop(99)
-            .marginHorizontal(16)
-            .height(500)
+            .marginTop(.stackMarginTop)
+            .marginHorizontal(.stackMarginHorizontal)
+            .height(.stackHeight)
         
         titleTextField.pin
-            .height(22)
+            .height(.titleHeight)
         
         colorButton.pin
-            .width(30)
-            .height(30)
+            .width(.colorButtonSize)
+            .height(.colorButtonSize)
+        
+        deleteButton.pin
+            .below(of: stackView)
+            .horizontally()
+            .bottom()
+            .marginHorizontal(.deleteMarginHorizontal)
+            .marginTop(.deleteMarginTop)
     }
 }
 
@@ -167,18 +221,34 @@ private extension HabitSettingsViewController {
     }
     
     @objc private func saveButtonTapped() {
-        if let text = titleTextField.text, !text.isEmpty {
-            viewModel?.saveNewHabit(title: text, color: colorButton.tintColor, date: timePicker.date) {
-                self.delegate?.reloadTableView()
-                self.navigationController?.dismiss(animated: true)
+        if viewModel?.habit != nil {
+            if let text = titleTextField.text, !text.isEmpty {
+                viewModel?.editHabit(title: text, color: colorButton.tintColor, date: timePicker.date) {
+                    self.popViewController()
+                }
+            }
+        } else {
+            if let text = titleTextField.text, !text.isEmpty {
+                viewModel?.saveNewHabit(title: text, color: colorButton.tintColor, date: timePicker.date) {
+                    self.popViewController()
+                }
             }
         }
+    }
+    
+    private func popViewController() {
+        delegate?.reloadTableView()
+        navigationController?.dismiss(animated: true)
     }
     
     @objc private func colorButtonTapped() {
         let colorPicker = UIColorPickerViewController()
         colorPicker.delegate = self
         present(colorPicker, animated: true)
+    }
+    
+    @objc private func deleteButtonTaped() {
+        createAlert()
     }
 }
 
@@ -216,5 +286,26 @@ private extension String {
     static var currentTimeText = ""
     static let cancelTitle = "Отменить"
     static let saveTitle = "Сохранить"
+    
+    static let deleteHabitTitle = "Удалить привычку"
+    static let deleteDescription = "Вы хотите удалить привычку "
+    static let deleteTitle = "Удалить"
 }
 
+private extension CGFloat {
+    static let smallTextSize: CGFloat = 13
+    static let bigTextSize: CGFloat = 17
+    static let itemSpacing: CGFloat = 5
+    static let stackSpacing: CGFloat = 15
+    
+    static let stackMarginTop: CGFloat = 99
+    static let stackMarginHorizontal: CGFloat = 16
+    static let stackHeight: CGFloat = 500
+    
+    static let titleHeight: CGFloat = 22
+    
+    static let colorButtonSize: CGFloat = 30
+    
+    static let deleteMarginHorizontal: CGFloat = 110
+    static let deleteMarginTop: CGFloat = 100
+}

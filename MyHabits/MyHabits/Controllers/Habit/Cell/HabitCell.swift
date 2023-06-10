@@ -23,7 +23,7 @@ class HabitCell: UITableViewCell {
     private var taskLabel = UILabel()
     private var dateLabel = UILabel()
     private var countLabel = UILabel()
-    private var checkImageView = UIImageView()
+    private var checkButton = UIButton()
     
     //MARK: - Initialize
     
@@ -41,16 +41,10 @@ class HabitCell: UITableViewCell {
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        
-//        checkImageView.image = UIImage(systemName: selected ? "checkmark.circle.fill" : "circle" )?.withRenderingMode(.alwaysTemplate)
+        viewModel?.checkHabit()
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        checkImageView.image = nil
-    }
-    
-    override func sizeThatFits(_ size: CGSize) -> CGSize { //зачем
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
         return autoSizeThatFits(size, layoutClosure: setupConstraints)
     }
     
@@ -59,25 +53,27 @@ class HabitCell: UITableViewCell {
     
     private func setupUI() {
         view.backgroundColor = .white
-        view.layer.cornerRadius = 8
+        view.layer.cornerRadius = .cornerRadius
         
-        taskLabel.font = UIFont.boldSystemFont(ofSize: 20)
-        taskLabel.numberOfLines = 2
+        taskLabel.font = UIFont.boldSystemFont(ofSize: .taskTextSize)
+        taskLabel.numberOfLines = .numberOfLines
         taskLabel.text = "f"
         
         dateLabel.textColor = .systemGray2
-        dateLabel.font = UIFont.systemFont(ofSize: 12)
+        dateLabel.font = UIFont.systemFont(ofSize: .dateTextSize)
         dateLabel.text = "f"
         
         countLabel.textColor = .systemGray
-        countLabel.font = UIFont.systemFont(ofSize: 13)
-        countLabel.text = "Счетчик: "
+        countLabel.font = UIFont.systemFont(ofSize: .countTextSize)
+        countLabel.text = .countTitle
+        
+        checkButton.addTarget(self, action: #selector(checkButtonTapped), for: .touchUpInside)
         
         addSubview(view)
         view.addSubview(taskLabel)
         view.addSubview(dateLabel)
         view.addSubview(countLabel)
-        view.addSubview(checkImageView)
+        view.addSubview(checkButton)
     }
     
     private func configure(habit: Habit) {
@@ -86,47 +82,86 @@ class HabitCell: UITableViewCell {
         
         dateLabel.text = habit.dateString
         
-        checkImageView.tintColor = habit.color
-        checkImageView.image = UIImage(systemName: habit.isAlreadyTakenToday ? "checkmark.circle.fill" : "circle")?.withRenderingMode(.alwaysTemplate)
+        checkButton.tintColor = habit.color
+        checkButton.setBackgroundImage( UIImage(systemName: habit.isAlreadyTakenToday ? .checkmarkImageName : .circleImageName)?.withRenderingMode(.alwaysTemplate), for: .normal)
+    }
+    
+    @objc func checkButtonTapped() {
+        viewModel?.checkHabit()
     }
     
     private func setupConstraints() {
         view.pin
             .all()
-            .marginTop(6)
-            .marginBottom(6)
-            .marginHorizontal(17)
-            .height(130)
-            .width(UIScreen.main.bounds.width - 34)
+            .marginVertical(.viewMarginVertical)
+            .marginHorizontal(.marginHorizontal)
+            .height(.viewHeight)
+            .width(UIScreen.main.bounds.width - .marginHorizontal*2)
         
         taskLabel.pin
             .top()
             .horizontally()
-            .marginVertical(20)
-            .marginLeft(17)
-            .marginRight(103)
+            .marginVertical(.taskMarginVertical)
+            .marginLeft(.marginHorizontal)
+            .marginRight(.marginRight)
             .sizeToFit(.width)
         
         dateLabel.pin
             .below(of: taskLabel, aligned: .left)
             .right()
-            .marginTop(4)
-            .marginRight(103)
+            .marginTop(.dateMarginTop)
+            .marginRight(.marginRight)
             .sizeToFit(.width)
         
         countLabel.pin
             .bottom()
             .horizontally()
-            .marginHorizontal(17)
-            .marginRight(135)
-            .marginBottom(20)
+            .marginHorizontal(.marginHorizontal)
+            .marginRight(.marginRight)
+            .marginBottom(.countMarginBottom)
             .sizeToFit(.width)
         
-        checkImageView.pin
+        checkButton.pin
+            .after(of: [taskLabel, dateLabel, countLabel])
             .vCenter(0)
             .right()
-            .marginRight(25)
-            .height(38)
-            .width(38)
+            .marginLeft(.checkMarginLeft)
+            .marginRight(.checkMarginRight)
+            .height(.imageSize)
+            .width(.imageSize)
     }
+}
+
+//MARK: - Extensions
+
+private extension String {
+    static let countTitle = "Счетчик: "
+    static let checkmarkImageName = "checkmark.circle.fill"
+    static let circleImageName = "circle"
+}
+
+private extension Int {
+    static let numberOfLines = 2
+}
+
+private extension CGFloat {
+    static let taskTextSize: CGFloat = 20
+    static let dateTextSize: CGFloat = 12
+    static let countTextSize: CGFloat = 13
+    
+    static let cornerRadius: CGFloat = 8
+    static let marginHorizontal: CGFloat = 17
+    static let marginRight: CGFloat = 103
+    
+    static let viewMarginVertical: CGFloat = 6
+    static let viewHeight: CGFloat = 130
+    
+    static let taskMarginVertical: CGFloat = 20
+    
+    static let dateMarginTop: CGFloat = 4
+    static let countMarginBottom: CGFloat = 20
+    
+    static let checkMarginLeft: CGFloat = 40
+    static let checkMarginRight: CGFloat = 25
+    static let imageSize: CGFloat = 38
 }

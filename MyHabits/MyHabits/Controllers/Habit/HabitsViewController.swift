@@ -64,7 +64,7 @@ class HabitsViewController: UIViewController {
 
 extension HabitsViewController {
     @objc func addHabit() {
-        let vc = HabitSettingsViewController()
+        let vc = HabitSettingsViewController(habit: nil)
         vc.delegate = self
         openController(vc)
     }
@@ -116,6 +116,7 @@ extension HabitsViewController: UITableViewDataSource {
             
             let cellViewModel = viewModel.getCellViewModel(for: indexPath)
             cell.viewModel = cellViewModel
+            cell.selectionStyle = .none
             
             return cell
         }

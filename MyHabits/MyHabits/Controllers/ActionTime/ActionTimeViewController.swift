@@ -49,7 +49,7 @@ class ActionTimeViewController: UIViewController {
         tableView.backgroundColor = .clear
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.rowHeight = 44
+        tableView.rowHeight = .rowHeight
         view.addSubview(tableView)
     }
     
@@ -80,7 +80,7 @@ extension ActionTimeViewController {
     }
     
     @objc private func editButtonTapped() {
-        self.navigationController?.pushViewController(HabitSettingsViewController(), animated: true)
+        self.navigationController?.pushViewController(HabitSettingsViewController(habit: viewModel.habit), animated: true)
     }
 }
 
@@ -114,4 +114,8 @@ private extension String {
     static let cancelTitle = "Отменить"
     static let editTitle = "Править"
     static let activeTitle = "Активность"
+}
+
+private extension CGFloat {
+    static let rowHeight: CGFloat = 44
 }

@@ -8,6 +8,7 @@
 import Foundation
 
 protocol ActionTimeViewModelType {
+    var habit: Habit { get }
     func getHabitName() -> String
     func getDates(comp: @escaping () -> ())
     func isTracked(date: Date) -> Bool
@@ -29,7 +30,6 @@ final class ActionTimeViewModel: ActionTimeViewModelType {
     
     func getDates(comp: @escaping () -> ()) {
         dates = HabitsStore.shared.dates
-        print(dates, "💔")
         comp()
     }
     

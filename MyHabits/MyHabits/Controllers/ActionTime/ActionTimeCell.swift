@@ -34,17 +34,19 @@ class ActionTimeCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: - setupUI
+    
     private func setupUI() {
         backgroundColor = .systemBackground
         titleLabel.text = "f"
-        titleLabel.font = UIFont.systemFont(ofSize: 17)
+        titleLabel.font = UIFont.systemFont(ofSize: .textSize)
         addSubview(titleLabel)
     }
     
     private func configure(for date: String, isTracked: Bool) {
         titleLabel.text = date
         if isTracked {
-            checkImageView.image = UIImage(systemName: "check")?.withTintColor(.systemPurple)
+            checkImageView.image = UIImage(systemName: .imageName)?.withTintColor(.systemPurple)
             addSubview(checkImageView)
         }
     }
@@ -53,14 +55,28 @@ class ActionTimeCell: UITableViewCell {
         titleLabel.pin
             .vertically()
             .left()
-            .marginVertical(11)
-            .marginHorizontal(16)
-            .width(150)
+            .marginVertical(.titleMarginVertical)
+            .marginHorizontal(.titleMarginHorizontal)
+            .width(.titleWidth)
         
         checkImageView.pin
             .below(of: titleLabel, aligned: .center)
             .vertically()
             .right()
-            .width(26)
+            .width(.imageWidth)
     }
+}
+
+//MARK: - Extensions
+
+private extension CGFloat {
+    static let titleMarginVertical: CGFloat = 11
+    static let titleMarginHorizontal: CGFloat = 16
+    static let titleWidth: CGFloat = 150
+    static let imageWidth: CGFloat = 26
+    static let textSize: CGFloat = 17
+}
+
+private extension String {
+    static let imageName = "check"
 }
